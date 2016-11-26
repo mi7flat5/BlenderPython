@@ -18,29 +18,15 @@ def get_backers(csv_filename):
            yield backers
 
 def render_text_to_file(text_to_render):
-    burp = 1
-
+    baseimage = Image.new('RGB', (128,128))
+    draw = ImageDraw.Draw(baseimage)
+    fnt = ImageFont.truetype('arial.ttf',20)
+    draw.text((0,0),text_to_render, font = fnt, fill=(255,255,255))
+    baseimage.save('test.png')
 
 
 def go():
     print("Texture Painter starting up.")
     for backer in get_backers('backers_10.csv'):
         print(backer)
-    base = Image.open('stand.png').convert('RGBA')
-
-# make a blank image for the text, initialized to transparent text color
-    txt = Image.new('RGBA', base.size, (255,255,255,0))
-
-# get a font
-    fnt = ImageFont.truetype('arial.ttf', 400)
-# get a drawing context
-    d = ImageDraw.Draw(txt)
-
-# draw text, half opacity
-    d.text((100,100), "Hello", font=fnt, fill=(255,255,255,128))
-# draw text, full opacity
-    d.text((100,600), "World", font=fnt, fill=(255,255,255,255))
-
-    out = Image.alpha_composite(base, txt)
-    out.save('standWwords.png')
-    out.show()
+    render_text_to_file("junk")
