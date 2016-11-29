@@ -24,12 +24,7 @@ def render_text_to_file(text_to_render, to_filename):
     draw.text((0,0),text_to_render, font = fnt, fill=(255,255,255))
     baseimage.save(to_filename)
 
-def readCSV():
-    cwd = os.path.dirname(bpy.data.filepath)
-    for backer in get_backers('backers.csv'):
-        textToRender = backer.get('Name')+' '+backer.get('Country')
-        toFileName = cwd +'\\texture_cache\\'+backer.get('Number')+'.png'
-        render_text_to_file(textToRender ,toFileName)
+
 
 def throw_invalid_selection():
     if len(bpy.context.selected_objects)== 0:
@@ -49,7 +44,30 @@ def get_offset(num, rows, spacing):
     y_offst =  (num //rows) * spacing[1]
     return (x_offset,y_offst)
 
+def swap_texture(plaque, image_filename,index):
+   
+    mat = plaque.material_slots[0].material.copy()
+    plaque.material_slots[0].material = mat
 
+    newImage = bpy.data.images.load(image_filename)
+
+    newTexture = plaque.material_slots[0].material.texture_slots[0].texture.copy()
+    newTexture.image = newImage
+   
+    plaque.material_slots[0].material.texture_slots[0].texture = newTexture
+    
+
+  
+
+    
+
+def swap_text(object, backer, num):
+    cwd = os.path.dirname(bpy.data.filepath)
+    textToRender = backer.get('Name')+' '+backer.get('Country')
+    toFileName = cwd +'\\texture_cache\\'+str(num)+'.png'
+    render_text_to_file(textToRender ,toFileName)
+    swap_texture(object, toFileName,num)
+    
 def go():
     print("Texture Painter starting up.")
     #readCSV()
@@ -63,5 +81,5 @@ def go():
         else:
             x,y = get_offset(num,4,(2,2,0))
             plaque = create_plaque(prototype,(x,y,0))
-        print("swapping texture to:",backer)
+        swap_text(plaque, backer,num)
 
